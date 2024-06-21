@@ -1,0 +1,65 @@
+
+v = form.get("values");
+domain = v.get("domain");
+query_map = Map();
+query_map.put("criteria","cliquser==" + user.get("id"));
+db = zoho.cliq.getRecords("userkey",query_map);
+if(db.get("status") == "SUCCESS")
+{
+	list = db.get("list");
+	for each  i in list
+	{
+		username = i.get("username");
+		privatekey = i.get("privatekey");
+		apikey = i.get("apikey");
+		apikey = zoho.encryption.aesDecode(privatekey,apikey);
+		dc = i.get("dc");
+	}
+	host = "www.pythonanywhere.com";
+	if(dc == "eu")
+	{
+		host = "eu.pythonanywhere.com";
+	}
+	value = domain.get("label");
+	api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/" + value + "/enable/";
+	headers = Map();
+	headers.put("Authorization","Token " + apikey);
+	headers.put("Content-Type","application/json");
+	responseapi = postUrl(api_url,null,headers);
+	info responseapi;
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("theme","poll");
+	response.put("card",card);
+	if(responseapi.get("status") == "domain_name_error")
+	{
+		response.put("text","Your webapp is already enabled");
+	}
+	else
+	{
+		response.put("text","Enable status : " + responseapi.get("status"));
+	}
+	return response;
+	//zoho.cliq.postToChat(chat.get("id"),"Enable status : " + responseapi.get("status"));
+}
+else
+{
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","You're not connected ");
+	card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+	card.put("theme","poll");
+	response.put("card",card);
+	response.put("text","use \"Connection\" menu to connect");
+	return response;
+	//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+}
+return Map();

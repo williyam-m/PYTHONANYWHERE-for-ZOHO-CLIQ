@@ -1,0 +1,32 @@
+
+response = Map();
+// newuser is a boolean which defines whether the user is a first time subscriber or not!
+if(newuser)
+{
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","Welcome " + user.get("first_name") + " ! Thanks for subscribing!");
+	card.put("theme","prompt");
+	response.put("card",card);
+	response.put("text","Use /pythonanywhere command to get all info about extension.");
+	return response;
+}
+else
+{
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","Hey " + user.get("first_name") + " ! Glad that you subscribed back! :wink: ");
+	card.put("theme","prompt");
+	response.put("card",card);
+	response.put("text","Use /pythonanywhere command to get all info about extension.");
+	return response;
+}
+return response;

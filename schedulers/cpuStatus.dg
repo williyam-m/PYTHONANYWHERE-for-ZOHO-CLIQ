@@ -1,0 +1,44 @@
+
+query_map = Map();
+query_map.put("criteria","cliquser==" + user.get("id"));
+db = zoho.cliq.getRecords("userkey",query_map);
+if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+{
+	list = db.get("list");
+	for each  i in list
+	{
+		username = i.get("username");
+		privatekey = i.get("privatekey");
+		apikey = i.get("apikey");
+		apikey = zoho.encryption.aesDecode(privatekey,apikey);
+		dc = i.get("dc");
+	}
+	host = "www.pythonanywhere.com";
+	if(dc == "eu")
+	{
+		host = "eu.pythonanywhere.com";
+	}
+	api_url = "https://" + host + "/api/v0/user/" + username + "/cpu/";
+	headers = Map();
+	headers.put("Authorization","Token " + apikey);
+	headers.put("Content-Type","application/json");
+	response = getUrl(api_url,headers);
+	info response;
+	r = response.toList();
+	if(r.size() != 0)
+	{
+		for each  i in r
+		{
+			table_data = {"text":username,"slides":{{"type":"table","title":"CPU info","data":{"headers":{"Parameter","Value"},"rows":{{"Parameter":"Daily cpu limit seconds","Value":i.get("daily_cpu_limit_seconds")},{"Parameter":"Next reset time","Value":i.get("next_reset_time")},{"Parameter":"Daily cpu total usage seconds","Value":i.get("daily_cpu_total_usage_seconds")}}}}}};
+			zoho.cliq.postToBot("pythonanywherebot",table_data);
+		}
+	}
+	else
+	{
+		info "Unable to fetch info from PythonAnywhere.";
+	}
+}
+else
+{
+	zoho.cliq.postToBot("pythonanywherebot","You're not connected to pythonanywhere ");
+}

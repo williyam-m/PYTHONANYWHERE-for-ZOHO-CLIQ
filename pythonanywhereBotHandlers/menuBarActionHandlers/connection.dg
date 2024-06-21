@@ -1,0 +1,77 @@
+
+if(sub_action.containsIgnoreCase("Disconnect"))
+{
+	query = Map();
+	criteria = "cliquser==" + user.get("id");
+	query.put("criteria",criteria);
+	response_map = zoho.cliq.getRecords("userkey",query);
+	record_id = 0;
+	if(response_map.get("status") == "SUCCESS" && response_map.get("list").size() != 0)
+	{
+		if(response_map.get("status").equalsIgnoreCase("SUCCESS") && response_map.get("list").size() > 0)
+		{
+			record_id = response_map.get("list").get(0).get("id");
+		}
+		if(record_id.length() > 0)
+		{
+			zoho.cliq.deleteRecord("userkey",record_id);
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("theme","poll");
+			response.put("card",card);
+			response.put("text","Successfully Disconnected");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"Successfully Disconnected");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","You're already disconnected ");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're already disconnected ");
+	}
+	return Map();
+}
+else if(sub_action.containsIgnoreCase("Connect"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() == 0)
+	{
+		inputs = list();
+		inputs.add({"type":"text","name":"username","label":"Username (in pythonanywhere)","mandatory":true,"placeholder":"e.g. demowebapp"});
+		inputs.add({"type":"text","name":"apikey","label":"Account Api Key ( Account -> API Token)","mandatory":true,"placeholder":"e.g. a98a8v8vhf4hf4hfhfhf47h4"});
+		inputs.add({"name":"dc","label":"where your account is registered.","mandatory":true,"type":"radio","options":{{"value":"www","label":"www.pythonanywhere.com if your account is on our US-based system."},{"value":"eu","label":"eu.pythonanywhere.com if your account is on our EU-based system."}}});
+		form = {"type":"form","title":"Connect to pythonanywhere","name":"wordform","version":1,"actions":{"submit":{"type":"invoke.function","name":"connect"}},"inputs":inputs};
+		return form;
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","You're already connected ");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're already connected ");
+	}
+	return Map();
+}
+return Map();

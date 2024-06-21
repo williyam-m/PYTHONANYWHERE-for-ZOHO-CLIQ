@@ -1,0 +1,451 @@
+
+id = "File";
+type = "Console";
+n = 0;
+header = Map();
+footer = Map();
+elements = list();
+sections = list();
+header = {"title":"pythonanywhere"};
+footer = {"text":"Powered by pythonanywhere","buttons":{{"label":" Help ❓ ","emotion":"positive","type":"open.url","url":"https://help.pythonanywhere.com/pages/"}}};
+tabsList = {{"label":"Files","id":"File"},{"label":"Console","id":"Console"},{"label":"WSGI","id":"WSGI"},{"label":"Log Files","id":"Log"}};
+if(target.containKey("id"))
+{
+	id = target.get("id");
+}
+if(id == "Console")
+{
+	return {"type":"applet","data_type":"web_view","tabs":tabsList,"web_view":{"url":"https://www.pythonanywhere.com/embedded/"},"active_tab":id};
+}
+else if(id == "File")
+{
+	n = 0;
+	button = List();
+	button.add({"label":" Source Directory 📂 ","emotion":"positive","type":"invoke.function","name":"sourcedirectory","id":"File"});
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url0 = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers0 = Map();
+		headers0.put("Authorization","Token " + apikey);
+		headers0.put("Content-Type","application/json");
+		responseapi0 = getUrl(api_url0,headers0);
+		info responseapi0;
+		r0 = responseapi0.toList();
+		if(r0.size() != 0)
+		{
+			for each  dd in r0
+			{
+				py = dd.get("python_version");
+				info py;
+				ex = dd.get("expiry");
+				info ex;
+				if(dd.get("force_https") == true)
+				{
+					http = "Enabled";
+				}
+				else
+				{
+					http = "Disabled";
+				}
+				if(dd.get("password_protection_enabled") == true)
+				{
+					pp = "Enabled";
+				}
+				else
+				{
+					pp = "Disabled";
+				}
+			}
+			api_urlcpu = "https://" + host + "/api/v0/user/" + username + "/cpu/";
+			headerscpu = Map();
+			headerscpu.put("Authorization","Token " + apikey);
+			headerscpu.put("Content-Type","application/json");
+			responseapicpu = getUrl(api_urlcpu,headerscpu);
+			info responseapicpu;
+			rcpu = responseapicpu.toList();
+			if(rcpu.size() != 0)
+			{
+				for each  cpu in rcpu
+				{
+					usage = cpu.get("daily_cpu_total_usage_seconds").toNumber();
+					reset = cpu.get("next_reset_time");
+					cpuinfo = true;
+				}
+			}
+			footer = {"text":"Python Version of your webapp :" + py,"buttons":{{"label":" Help ❓ ","emotion":"positive","type":"open.url","url":"https://help.pythonanywhere.com/pages/"}}};
+			api_url = "https://" + host + "/api/v0/user/" + username + "/files/path/home/";
+			headers = Map();
+			headers.put("Authorization","Token " + apikey);
+			headers.put("Content-Type","application/json");
+			response = getUrl(api_url,headers);
+			info response;
+			r = response.toList();
+			if(r.size() != 0)
+			{
+				for each  i in r
+				{
+					key = i.keys();
+					info key;
+					elements.add({"type":"title","text":"Domain : " + key.tostring() + ".pythonanywhere.com"});
+					if(cpuinfo == true)
+					{
+						elements.add({"type":"title","text":":server: CPU usage :  " + usage + "s out of 100s " + "\t >> \t" + " Next reset time :" + reset});
+					}
+					elements.add({"type":"text","text":" :security: Force HTTPS : " + http + "\t | \t" + " 🔐 Password Protection: " + pp + "\t | \t" + " :calendar: Expire on :" + ex});
+					elements.add({"type":"divider"});
+					elements.add({"type":"title","text":" 📂 " + key.tostring()});
+					elements.add({"type":"divider"});
+					sections.add({"id":"first","elements":elements});
+					elements = list();
+					api_url = "https://" + host + "/api/v0/user/" + username + "/files/path/home/" + key;
+					headers = Map();
+					headers.put("Authorization","Token " + apikey);
+					headers.put("Content-Type","application/json");
+					fileresponse = getUrl(api_url,headers);
+					info fileresponse;
+					filelist = fileresponse.toList();
+					filekeys = fileresponse.keys().toList();
+					info filekeys;
+					if(filekeys.size() > 9)
+					{
+						button.add({"label":" Next Page ➡️ ","emotion":"positive","type":"invoke.function","name":"nextpage","id":"File"});
+					}
+					for each  fileset in filelist
+					{
+						for each  file in fileset
+						{
+							elements = list();
+							f = filekeys.get(n);
+							info f;
+							info file;
+							type = file.get("type");
+							//info type;
+							url = file.get("url");
+							//info url;
+							u = "";
+							for each  s in f.toCollection("")
+							{
+								if(s == " ")
+								{
+									u = u + "%20";
+								}
+								else
+								{
+									u = u + s;
+								}
+							}
+							url = "https://" + host + "/user/" + username + "/files/home/" + key + "/" + u;
+							if(type == "directory")
+							{
+								elements.add({"type":"activity","title":f,"description":"","image_url":"https://static.vecteezy.com/system/resources/previews/000/439/792/original/vector-folder-icon.jpg"});
+								elements.add({"type":"buttons","buttons":{{"label":"View","emotion":"positive","type":"open.url","url":url}}});
+							}
+							else
+							{
+								elements.add({"type":"activity","title":f,"description":"","image_url":"https://static.vecteezy.com/system/resources/previews/000/581/925/original/file-icon-vector-illustration.jpg"});
+								elements.add({"type":"buttons","buttons":{{"label":"Edit","emotion":"negative","type":"open.url","url":url + "?edit"},{"label":"View","emotion":"positive","type":"open.url","url":url}}});
+							}
+							elements.add({"type":"divider"});
+							sections.add({"id":n,"elements":elements});
+							info n;
+							n = n + 1;
+							if(n == 9)
+							{
+								break;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				return {"type":"applet","data_type":"info","info":{"title":"You don't have any Webapp","description":""},"tabs":tabsList,"active_tab":id};
+			}
+		}
+		else
+		{
+			return {"type":"applet","data_type":"info","info":{"title":"You don't have any Webapp","description":""},"tabs":tabsList,"active_tab":id};
+		}
+	}
+	else
+	{
+		return {"type":"applet","data_type":"info","info":{"title":"You're not connected","description":""},"tabs":tabsList,"active_tab":id};
+	}
+	header = {"title":"Files ( Page 1 )","navigation":"new","buttons":button};
+	return {"type":"applet","tabs":tabsList,"active_tab":id,"header":header,"footer":footer,"sections":sections};
+}
+else if(id == "WSGI")
+{
+	n = 0;
+	header = {"title":"WSGI (Web Server Gateway Interface)"};
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		response = getUrl(api_url,headers);
+		info response;
+		r = response.toList();
+		if(r.size() != 0)
+		{
+			for each  dd in r
+			{
+				py = dd.get("python_version");
+				info py;
+				ex = dd.get("expiry");
+				info ex;
+				if(dd.get("force_https") == true)
+				{
+					http = "Enabled";
+				}
+				else
+				{
+					http = "Disabled";
+				}
+				if(dd.get("password_protection_enabled") == true)
+				{
+					pp = "Enabled";
+				}
+				else
+				{
+					pp = "Disabled";
+				}
+				api_urlcpu = "https://" + host + "/api/v0/user/" + username + "/cpu/";
+				headerscpu = Map();
+				headerscpu.put("Authorization","Token " + apikey);
+				headerscpu.put("Content-Type","application/json");
+				responseapicpu = getUrl(api_urlcpu,headerscpu);
+				info responseapicpu;
+				rcpu = responseapicpu.toList();
+				if(rcpu.size() != 0)
+				{
+					for each  cpu in rcpu
+					{
+						usage = cpu.get("daily_cpu_total_usage_seconds").toNumber();
+						reset = cpu.get("next_reset_time");
+						cpuinfo = true;
+					}
+				}
+				footer = {"text":"Python Version of your webapp :" + py,"buttons":{{"label":" Help ❓ ","emotion":"positive","type":"open.url","url":"https://help.pythonanywhere.com/pages/"}}};
+				d = dd.get("domain_name");
+				value = "";
+				col = d;
+				for each  c in col.toCollection("")
+				{
+					info c;
+					if(c == ".")
+					{
+						value = value + "_";
+					}
+					else
+					{
+						value = value + c;
+					}
+				}
+				//elements.add({"type":"title","text":"WSGI configuration for 
+				elements.add({"type":"title","text":" WSGI configuration for Domain : " + d});
+				if(cpuinfo == true)
+				{
+					elements.add({"type":"title","text":":server: CPU usage :  " + usage + "s out of 100s " + "\t >> \t" + " Next reset time :" + reset});
+				}
+				elements.add({"type":"text","text":" :security: Force HTTPS : " + http + "\t | \t" + " 🔐 Password Protection: " + pp + "\t | \t" + " :calendar: Expire on :" + ex});
+				//elements.add({"type":"text","text":"	\"Exercise caution when configuring the WSGI file to ensure proper syntax, module compatibility, and security measures, as errors can impact the stability and security of your web application.\" "});
+				elements.add({"type":"divider"});
+				sections.add({"id":"first","elements":elements});
+				elements = List();
+				url = "https://" + host + "/user/" + username + "/files/var/www/" + value + "_wsgi.py";
+				elements.add({"type":"activity","title":value + "_wsgi.py","description":"Exercise caution when configuring the WSGI file to ensure proper syntax, module compatibility, and security measures, as errors can impact the stability and security of your web application.","image_url":"https://cdn1.iconfinder.com/data/icons/files-folders/32/file-cog-512.png"});
+				elements.add({"type":"buttons","buttons":{{"label":"Configure","emotion":"negative","type":"open.url","url":url + "?edit"},{"label":"View","emotion":"positive","type":"open.url","url":url}}});
+				elements.add({"type":"divider"});
+				sections.add({"id":value,"elements":elements});
+				info n;
+				n = n + 1;
+				if(n == 10)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			return {"type":"applet","data_type":"info","info":{"title":"You don't have any Webapp","description":""},"tabs":tabsList,"active_tab":id};
+		}
+	}
+	else
+	{
+		return {"type":"applet","data_type":"info","info":{"title":"You're not connected ","description":""},"tabs":tabsList,"active_tab":id};
+	}
+	return {"type":"applet","tabs":tabsList,"active_tab":id,"header":header,"footer":footer,"sections":sections};
+}
+else if(id == "Log")
+{
+	n = 0;
+	header = {"title":"Log Files"};
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		response = getUrl(api_url,headers);
+		info response;
+		r = response.toList();
+		if(r.size() != 0)
+		{
+			for each  dd in r
+			{
+				py = dd.get("python_version");
+				info py;
+				ex = dd.get("expiry");
+				info ex;
+				if(dd.get("force_https") == true)
+				{
+					http = "Enabled";
+				}
+				else
+				{
+					http = "Disabled";
+				}
+				if(dd.get("password_protection_enabled") == true)
+				{
+					pp = "Enabled";
+				}
+				else
+				{
+					pp = "Disabled";
+				}
+				api_urlcpu = "https://" + host + "/api/v0/user/" + username + "/cpu/";
+				headerscpu = Map();
+				headerscpu.put("Authorization","Token " + apikey);
+				headerscpu.put("Content-Type","application/json");
+				responseapicpu = getUrl(api_urlcpu,headerscpu);
+				info responseapicpu;
+				rcpu = responseapicpu.toList();
+				if(rcpu.size() != 0)
+				{
+					for each  cpu in rcpu
+					{
+						usage = cpu.get("daily_cpu_total_usage_seconds").toNumber();
+						reset = cpu.get("next_reset_time");
+						cpuinfo = true;
+					}
+				}
+				footer = {"text":"Python Version of your webapp :" + py,"buttons":{{"label":" Help ❓ ","emotion":"positive","type":"open.url","url":"https://help.pythonanywhere.com/pages/"}}};
+				d = dd.get("domain_name");
+				value = "";
+				col = d;
+				for each  c in col.toCollection("")
+				{
+					info c;
+					if(c == ".")
+					{
+						value = value + "_";
+					}
+					else
+					{
+						value = value + c;
+					}
+				}
+				elements.add({"type":"title","text":"Log Files for Domain : " + d});
+				if(cpuinfo == true)
+				{
+					elements.add({"type":"title","text":":server: CPU usage :  " + usage + "s out of 100s " + "\t >> \t" + " Next reset time :" + reset});
+				}
+				elements.add({"type":"text","text":" :security: Force HTTPS : " + http + "\t | \t" + " 🔐 Password Protection: " + pp + "\t | \t" + " :calendar: Expire on :" + ex});
+				elements.add({"type":"divider"});
+				elements.add({"type":"title","text":" 📰 The first place to look if something goes wrong."});
+				elements.add({"type":"divider"});
+				sections.add({"id":"first","elements":elements});
+				elements = List();
+				url = "https://" + host + "/user/" + username + "/files/var/log/" + d;
+				elements.add({"type":"activity","title":"Access.log","description":"","image_url":"https://png.pngtree.com/png-vector/20190419/ourmid/pngtree-log-file-document-icon-png-image_959060.jpg"});
+				elements.add({"type":"buttons","buttons":{{"label":"Check","emotion":"negative","type":"open.url","url":url + ".access.log"}}});
+				elements.add({"type":"divider"});
+				sections.add({"id":value + "access","elements":elements});
+				elements = List();
+				elements.add({"type":"activity","title":"Error.log","description":"","image_url":"https://th.bing.com/th/id/OIP.S5urXn4y8ln3OSofXyRm9AHaHa?w=512&h=512&rs=1&pid=ImgDetMain"});
+				elements.add({"type":"buttons","buttons":{{"label":"Check","emotion":"negative","type":"open.url","url":url + ".error.log"}}});
+				elements.add({"type":"divider"});
+				sections.add({"id":value + "error","elements":elements});
+				elements = List();
+				elements.add({"type":"activity","title":"Server.log","description":"","image_url":"https://static.vecteezy.com/system/resources/previews/000/337/577/original/vector-server-icon.jpg"});
+				elements.add({"type":"buttons","buttons":{{"label":"Check","emotion":"negative","type":"open.url","url":url + ".server.log"}}});
+				elements.add({"type":"divider"});
+				sections.add({"id":value + "server","elements":elements});
+				elements = List();
+				elements.add({"type":"title","text":"  📰 Log files are periodically rotated. You can find old logs here:"});
+				elements.add({"type":"buttons","buttons":{{"label":"View","emotion":"positive","type":"open.url","url":"https://" + host + "/user/" + username + "/files/var/log/"}}});
+				elements.add({"type":"divider"});
+				sections.add({"id":value + "logfile","elements":elements});
+				info n;
+				n = n + 1;
+				if(n == 4)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			return {"type":"applet","data_type":"info","info":{"title":"You don't have any Webapp","description":""},"tabs":tabsList,"active_tab":id};
+		}
+	}
+	else
+	{
+		return {"type":"applet","data_type":"info","info":{"title":"You're not connected ","description":""},"tabs":tabsList,"active_tab":id};
+	}
+	return {"type":"applet","tabs":tabsList,"active_tab":id,"header":header,"footer":footer,"sections":sections};
+}
+return {"type":"applet","tabs":tabsList,"active_tab":id,"header":header,"footer":footer,"sections":sections};

@@ -1,0 +1,102 @@
+
+elements = LIst();
+sections = LIst();
+n = 0;
+header = Map();
+footer = Map();
+header = {"title":"Source Directory","navigation":"continue"};
+footer = {"text":"Powered by pythonanywhere","buttons":{{"label":" Help ❓ ","emotion":"positive","type":"open.url","url":"https://help.pythonanywhere.com/pages/"}}};
+tabsList = {{"label":"Files","id":"File"},{"label":"Console","id":"Console"},{"label":"WSGI","id":"WSGI"},{"label":"Log Files","id":"Log"}};
+id = "File";
+//header = {"title":"Files","navigation":"new","buttons":{{"label":" Source Directory ","emotion":"positive","type":"invoke.function","name":"search","id":"File"},{"label":" Next Page ➡️ ","emotion":"positive","type":"invoke.function","name":"nextpage","id":"File"}}};
+query_map = Map();
+query_map.put("criteria","cliquser==" + user.get("id"));
+db = zoho.cliq.getRecords("userkey",query_map);
+if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+{
+	list = db.get("list");
+	for each  i in list
+	{
+		username = i.get("username");
+		privatekey = i.get("privatekey");
+		apikey = i.get("apikey");
+		apikey = zoho.encryption.aesDecode(privatekey,apikey);
+		dc = i.get("dc");
+	}
+	host = "www.pythonanywhere.com";
+	if(dc == "eu")
+	{
+		host = "eu.pythonanywhere.com";
+	}
+	api_url = "https://" + host + "/api/v0/user/" + username + "/files/path/home/";
+	headers = Map();
+	headers.put("Authorization","Token " + apikey);
+	headers.put("Content-Type","application/json");
+	response = getUrl(api_url,headers);
+	info response;
+	r = response.toList();
+	if(r.size() != 0)
+	{
+		for each  i in r
+		{
+			key = i.keys();
+			info key;
+			elements.add({"type":"title","text":"Domain : " + key.tostring() + ".pythonanywhere.com"});
+			elements.add({"type":"text","text":" 📂 " + key.tostring()});
+			elements.add({"type":"divider"});
+			sections.add({"id":"hi","elements":elements});
+			api_url = "https://" + host + "/api/v0/user/" + username + "/files/tree/?path=/home/" + key;
+			headers = Map();
+			headers.put("Authorization","Token " + apikey);
+			headers.put("Content-Type","application/json");
+			fileresponse = getUrl(api_url,headers);
+			info fileresponse;
+			filelist = fileresponse.toList();
+			for each  f in filelist
+			{
+				u = "";
+				for each  s in f.toCollection("")
+				{
+					if(s == " ")
+					{
+						u = u + "%20";
+					}
+					else
+					{
+						u = u + s;
+					}
+				}
+				elements = LIst();
+				url = "https://" + host + "/user/" + username + "/files" + u;
+				if(endsWith(u,"/"))
+				{
+					elements.add({"type":"activity","title":f.substring(key.length() + 7,f.length()),"description":"","image_url":"https://static.vecteezy.com/system/resources/previews/000/439/792/original/vector-folder-icon.jpg"});
+					elements.add({"type":"buttons","buttons":{{"label":"View","emotion":"positive","type":"open.url","url":url}}});
+				}
+				else
+				{
+					elements.add({"type":"activity","title":f.substring(key.length() + 7,f.length()),"description":"","image_url":"https://static.vecteezy.com/system/resources/previews/000/581/925/original/file-icon-vector-illustration.jpg"});
+					elements.add({"type":"buttons","buttons":{{"label":"Edit","emotion":"negative","type":"open.url","url":url + "?edit"},{"label":"View","emotion":"positive","type":"open.url","url":url}}});
+				}
+				elements.add({"type":"divider"});
+				sections.add({"id":n,"elements":elements});
+				info n;
+				n = n + 1;
+				if(n == 21)
+				{
+					break;
+				}
+			}
+			//sections.add({"id":"web","elements":elements});
+		}
+	}
+	else
+	{
+		return {"type":"applet","data_type":"info","info":{"title":"You don't have any Webapp","description":""},"tabs":tabsList,"active_tab":id};
+	}
+}
+else
+{
+	return {"type":"applet","data_type":"info","info":{"title":"You're not connected","description":""},"tabs":tabsList,"active_tab":id};
+}
+return {"type":"applet","tabs":tabsList,"active_tab":id,"header":header,"footer":footer,"sections":sections};

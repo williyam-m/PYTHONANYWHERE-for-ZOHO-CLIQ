@@ -1,0 +1,135 @@
+
+v = form.get("values");
+domain = v.get("domain");
+query_map = Map();
+query_map.put("criteria","cliquser==" + user.get("id"));
+db = zoho.cliq.getRecords("userkey",query_map);
+if(db.get("status") == "SUCCESS")
+{
+	list = db.get("list");
+	for each  i in list
+	{
+		username = i.get("username");
+		privatekey = i.get("privatekey");
+		apikey = i.get("apikey");
+		apikey = zoho.encryption.aesDecode(privatekey,apikey);
+		dc = i.get("dc");
+	}
+	host = "www.pythonanywhere.com";
+	if(dc == "eu")
+	{
+		host = "eu.pythonanywhere.com";
+	}
+	value = domain.get("label");
+	api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/" + value + "/";
+	headers = Map();
+	headers.put("Authorization","Token " + apikey);
+	headers.put("Content-Type","application/x-www-form-urlencoded");
+	response = getUrl(api_url,headers);
+	info response;
+	r = response.toList();
+	for each  i in r
+	{
+		//table_data = {"text":"Domain Info","slides":{{"type":"table","title":value,"data":{"headers":{"Parameter","Value"},"rows":{{"Parameter":"id","Value":i.get("id")},{"Parameter":"User","Value":i.get("user")},{"Parameter":"Python version","Value":i.get("python_version")},{"Parameter":"Source directory","Value":host + "/user/" + username + "/files/" + i.get("source_directory")},{"Parameter":"Working directory","Value":host + "/user/" + username + "/files/" + i.get("working_directory")},{"Parameter":"Virtualenv path","Value":i.get("virtualenv_path")},{"Parameter":"Expiry","Value":i.get("expiry")},{"Parameter":"Force https","Value":i.get("force_https")},{"Parameter":"Password protection enabled","Value":i.get("password_protection_enabled")},{"Parameter":"Password protection username","Value":i.get("password_protection_username")},{"Parameter":"Password protection password","Value":i.get("password_protection_password")}}}}}};
+		//zoho.cliq.postToChat(chat.get("id"),table_data);
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title",value);
+		response.put("card",card);
+		slidesList = list();
+		slidesList0 = Map();
+		slidesList0.put("type","table");
+		//slidesList0.put("title",i.get("name"));
+		buttonsList = list();
+		buttonsList0 = Map();
+		buttonsList0.put("label","Source Directory");
+		buttonsList0.put("type","+");
+		action = Map();
+		action.put("type","open.url");
+		data = Map();
+		data.put("web","https://" + host + "/user/" + username + "/files/" + i.get("source_directory"));
+		action.put("data",data);
+		buttonsList0.put("action",action);
+		buttonsList.add(buttonsList0);
+		buttonsList1 = Map();
+		buttonsList1.put("label","Working Directory");
+		buttonsList1.put("type","-");
+		action = Map();
+		action.put("type","open.url");
+		data = Map();
+		data.put("web","https://" + host + "/user/" + username + "/files/" + i.get("working_directory"));
+		action.put("data",data);
+		buttonsList1.put("action",action);
+		buttonsList.add(buttonsList1);
+		slidesList0.put("buttons",buttonsList);
+		data = Map();
+		headersList = list();
+		headersList.add("Parameter");
+		headersList.add("Value");
+		data.put("headers",headersList);
+		rowsList = list();
+		rowsList0 = Map();
+		rowsList0.put("Parameter","ID");
+		rowsList0.put("Value",i.get("id"));
+		rowsList.add(rowsList0);
+		rowsList1 = Map();
+		rowsList1.put("Parameter","User");
+		rowsList1.put("Value",i.get("user"));
+		rowsList.add(rowsList1);
+		rowsList2 = Map();
+		rowsList2.put("Parameter","Python Version");
+		rowsList2.put("Value",i.get("python_version"));
+		rowsList.add(rowsList2);
+		rowsList3 = Map();
+		rowsList3.put("Parameter","Virtualenv Path");
+		rowsList3.put("Value",i.get("virtualenv_path"));
+		rowsList.add(rowsList3);
+		rowsList4 = Map();
+		rowsList4.put("Parameter","Expiry");
+		rowsList4.put("Value",i.get("expiry"));
+		rowsList.add(rowsList4);
+		rowsList5 = Map();
+		rowsList5.put("Parameter","Force https");
+		rowsList5.put("Value",i.get("force_https"));
+		rowsList.add(rowsList5);
+		rowsList6 = Map();
+		rowsList6.put("Parameter","Password Protection Enabled");
+		rowsList6.put("Value",i.get("password_protection_enabled"));
+		rowsList.add(rowsList6);
+		rowsList7 = Map();
+		rowsList7.put("Parameter","Password protection Username");
+		rowsList7.put("Value",i.get("password_protection_username"));
+		rowsList.add(rowsList7);
+		rowsList8 = Map();
+		rowsList8.put("Parameter","Password Protection Password");
+		rowsList8.put("Value",i.get("password_protection_password"));
+		rowsList.add(rowsList8);
+		data.put("rows",rowsList);
+		slidesList0.put("data",data);
+		slidesList.add(slidesList0);
+		response.put("slides",slidesList);
+		response.put("text","Domain Info");
+		return response;
+	}
+}
+else
+{
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","You're not connected ");
+	card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+	card.put("theme","poll");
+	response.put("card",card);
+	response.put("text","use \"Connection\" menu to connect");
+	return response;
+	//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+}
+return Map();

@@ -1,0 +1,175 @@
+
+v = form.get("values");
+command = v.get("command");
+hour = v.get("hour");
+minute = v.get("minute");
+description = v.get("description");
+enabled = true;
+interval = "daily";
+query_map = Map();
+query_map.put("criteria","cliquser==" + user.get("id"));
+db = zoho.cliq.getRecords("userkey",query_map);
+if(db.get("status") == "SUCCESS")
+{
+	list = db.get("list");
+	for each  i in list
+	{
+		username = i.get("username");
+		privatekey = i.get("privatekey");
+		apikey = i.get("apikey");
+		apikey = zoho.encryption.aesDecode(privatekey,apikey);
+		dc = i.get("dc");
+	}
+	host = "www.pythonanywhere.com";
+	if(dc == "eu")
+	{
+		host = "eu.pythonanywhere.com";
+	}
+	api_url = "https://" + host + "/api/v0/user/" + username + "/schedule/";
+	headers = Map();
+	headers.put("Authorization","Token " + apikey);
+	headers.put("Content-Type","application/x-www-form-urlencoded");
+	data_create_schedule = Map();
+	data_create_schedule.put("command",command);
+	data_create_schedule.put("enabled",enabled);
+	data_create_schedule.put("interval",interval);
+	data_create_schedule.put("hour",hour);
+	data_create_schedule.put("minute",minute);
+	data_create_schedule.put("description",description);
+	responseapi = postUrl(api_url,data_create_schedule,headers);
+	info responseapi;
+	r = responseapi.toList();
+	if(r.size() != 0)
+	{
+		for each  i in r
+		{
+			if(i.get("detail") != "You have reached your maximum number of scheduled tasks")
+			{
+				//table_data = {"text":"Domain Info","slides":{{"type":"table","title":username,"data":{"headers":{"Parameter","Value"},"rows":{{"Parameter":"id","Value":i.get("id")},{"Parameter":"url","Value":i.get("url")},{"Parameter":"Command","Value":i.get("command")},{"Parameter":"Expiry","Value":i.get("expiry")},{"Parameter":"Enabled","Value":i.get("enabled")},{"Parameter":"Interval","Value":i.get("interval")},{"Parameter":"Time","Value":i.get("printable_time")},{"Parameter":"Extend url","Value":i.get("extend_url")},{"Parameter":"Log file","Value":i.get("logfile")},{"Parameter":"Description","Value":i.get("description")}}}}}};
+				//zoho.cliq.postToChat(chat.get("id"),table_data);
+				response = Map();
+				bot = Map();
+				bot.put("name","pythonanywhere bot");
+				bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+				response.put("bot",bot);
+				card = Map();
+				card.put("title","Successfully Created");
+				response.put("card",card);
+				slidesList = list();
+				slidesList0 = Map();
+				slidesList0.put("type","table");
+				//slidesList0.put("title",i.get("name"));
+				buttonsList = list();
+				buttonsList0 = Map();
+				buttonsList0.put("label","View Log file");
+				buttonsList0.put("type","+");
+				action = Map();
+				action.put("type","open.url");
+				data = Map();
+				data.put("web","https://" + host + i.get("logfile"));
+				action.put("data",data);
+				buttonsList0.put("action",action);
+				buttonsList.add(buttonsList0);
+				slidesList0.put("buttons",buttonsList);
+				data = Map();
+				headersList = list();
+				headersList.add("Parameter");
+				headersList.add("Value");
+				data.put("headers",headersList);
+				rowsList = list();
+				rowsList0 = Map();
+				rowsList0.put("Parameter","ID");
+				rowsList0.put("Value",i.get("id"));
+				rowsList.add(rowsList0);
+				rowsList1 = Map();
+				rowsList1.put("Parameter","Command");
+				rowsList1.put("Value",i.get("command"));
+				rowsList.add(rowsList1);
+				rowsList2 = Map();
+				rowsList2.put("Parameter","Expiry");
+				rowsList2.put("Value",i.get("expiry"));
+				rowsList.add(rowsList2);
+				rowsList3 = Map();
+				rowsList3.put("Parameter","Enabled");
+				rowsList3.put("Value",i.get("enabled"));
+				rowsList.add(rowsList3);
+				rowsList4 = Map();
+				rowsList4.put("Parameter","Interval");
+				rowsList4.put("Value",i.get("interval"));
+				rowsList.add(rowsList4);
+				rowsList5 = Map();
+				rowsList5.put("Parameter","Time");
+				rowsList5.put("Value",i.get("printable_time"));
+				rowsList.add(rowsList5);
+				rowsList6 = Map();
+				rowsList6.put("Parameter","Description");
+				rowsList6.put("Value",i.get("description"));
+				rowsList.add(rowsList6);
+				data.put("rows",rowsList);
+				slidesList0.put("data",data);
+				slidesList.add(slidesList0);
+				response.put("slides",slidesList);
+				response.put("text","Scheduled task info");
+				return response;
+			}
+			else
+			{
+				response = Map();
+				bot = Map();
+				bot.put("name","pythonanywhere bot");
+				bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+				response.put("bot",bot);
+				card = Map();
+				card.put("title",i.get("detail"));
+				card.put("theme","prompt");
+				response.put("card",card);
+				buttonsList = list();
+				buttonsList0 = Map();
+				buttonsList0.put("label","Upgrade");
+				buttonsList0.put("type","-");
+				action = Map();
+				action.put("type","open.url");
+				data = Map();
+				data.put("web","https://" + host + "/user/" + username + "/account/#upgrade");
+				action.put("data",data);
+				buttonsList0.put("action",action);
+				buttonsList.add(buttonsList0);
+				response.put("buttons",buttonsList);
+				response.put("text","Click below link to redirect to account upgrade page.");
+				return response;
+				//zoho.cliq.postToChat(chat.get("id"),i.get("detail"));
+			}
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","Unable to create Scheduled task");
+		return response;
+		//info "Unable to fetch info from pythonanywhere";
+	}
+}
+else
+{
+	response = Map();
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","You're not connected ");
+	card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+	card.put("theme","poll");
+	response.put("card",card);
+	response.put("text","use \"Connection\" menu to connect");
+	return response;
+	//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+}
+return Map();

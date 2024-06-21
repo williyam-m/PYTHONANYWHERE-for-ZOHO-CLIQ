@@ -1,0 +1,319 @@
+
+response = Map();
+if(sub_action.containsIgnoreCase("View"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/consoles/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+			options = List();
+			inputs = list();
+			for each  i in r
+			{
+				id = i.get("id");
+				name = i.get("name");
+				option = Map();
+				option.put("value",id);
+				option.put("label",name);
+				options.add(option);
+			}
+			inputs.add({"name":"id","label":"Console name","placeholder":"Choose  console","multiple":false,"mandatory":true,"type":"dynamic_select","options":options});
+			form = {"type":"form","title":"Console","name":"wordform","actions":{"submit":{"type":"invoke.function","name":"viewconsole"}},"inputs":inputs};
+			return form;
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("title","You don't have any console");
+			card.put("icon","https://cdn1.iconfinder.com/data/icons/lightly-selected/30/console-480.png");
+			card.put("theme","prompt");
+			response.put("card",card);
+			buttonsList = list();
+			buttonsList0 = Map();
+			buttonsList0.put("label","Create Console");
+			buttonsList0.put("type","-");
+			action = Map();
+			action.put("type","open.url");
+			data = Map();
+			data.put("web","https://" + host + "/user/" + username + "/consoles/");
+			action.put("data",data);
+			buttonsList0.put("action",action);
+			buttonsList.add(buttonsList0);
+			response.put("buttons",buttonsList);
+			response.put("text","Click below link to redirect to create console page.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"You don't have any console");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+	return Map();
+}
+else if(sub_action.containsIgnoreCase("file"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/files/path/home/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("title","You don't have any console");
+			card.put("icon","https://cdn1.iconfinder.com/data/icons/lightly-selected/30/console-480.png");
+			card.put("theme","prompt");
+			response.put("card",card);
+			buttonsList = list();
+			buttonsList0 = Map();
+			buttonsList0.put("label","Create Console");
+			buttonsList0.put("type","-");
+			action = Map();
+			action.put("type","open.url");
+			data = Map();
+			data.put("web","https://" + host + "/user/" + username + "/consoles/");
+			action.put("data",data);
+			buttonsList0.put("action",action);
+			buttonsList.add(buttonsList0);
+			response.put("buttons",buttonsList);
+			response.put("text","Click below link to redirect to create console page.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"You don't have any console");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+	return Map();
+}
+else if(sub_action.containsIgnoreCase("Shared withYou"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/consoles/shared_with_you/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+			for each  i in r
+			{
+				//table_data = {"text":"Console info","slides":{{"type":"table","title":"Consoles shared with you","data":{"headers":{"Parameter","Value"},"rows":{{"Parameter":"id","Value":i.get("id")},{"Parameter":"User","Value":i.get("user")},{"Parameter":"executable","Value":i.get("executable")},{"Parameter":"arguments","Value":i.get("arguments")},{"Parameter":"working_directory","Value":i.get("working_directory")},{"Parameter":"name","Value":i.get("name")},{"Parameter":"console_url","Value":host + i.get("console_url")},{"Parameter":"console_frame_url","Value":host + i.get("console_frame_url")}}}}}};
+				//zoho.cliq.postToChat(chat.get("id"),table_data);
+				response = Map();
+				bot = Map();
+				bot.put("name","pythonanywhere bot");
+				bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+				response.put("bot",bot);
+				card = Map();
+				card.put("title","Console Info");
+				card.put("icon","https://cdn1.iconfinder.com/data/icons/lightly-selected/30/console-480.png");
+				response.put("card",card);
+				slidesList = list();
+				slidesList0 = Map();
+				slidesList0.put("type","table");
+				//slidesList0.put("title",i.get("name"));
+				buttonsList = list();
+				buttonsList0 = Map();
+				buttonsList0.put("label","View Console");
+				buttonsList0.put("type","+");
+				action = Map();
+				action.put("type","open.url");
+				data = Map();
+				data.put("web","https://" + host + i.get("console_url"));
+				action.put("data",data);
+				buttonsList0.put("action",action);
+				buttonsList.add(buttonsList0);
+				buttonsList1 = Map();
+				buttonsList1.put("label","View Console Frame");
+				buttonsList1.put("type","-");
+				action = Map();
+				action.put("type","open.url");
+				data = Map();
+				data.put("web","https://" + host + i.get("console_frame_url"));
+				action.put("data",data);
+				buttonsList1.put("action",action);
+				buttonsList.add(buttonsList1);
+				slidesList0.put("buttons",buttonsList);
+				data = Map();
+				headersList = list();
+				headersList.add("Parameter");
+				headersList.add("Value");
+				data.put("headers",headersList);
+				rowsList = list();
+				rowsList0 = Map();
+				rowsList0.put("Parameter","ID");
+				rowsList0.put("Value",i.get("id"));
+				rowsList.add(rowsList0);
+				rowsList1 = Map();
+				rowsList1.put("Parameter","User");
+				rowsList1.put("Value",i.get("user"));
+				rowsList.add(rowsList1);
+				rowsList2 = Map();
+				rowsList2.put("Parameter","Executable");
+				rowsList2.put("Value",i.get("executable"));
+				rowsList.add(rowsList2);
+				rowsList3 = Map();
+				rowsList3.put("Parameter","Arguments");
+				rowsList3.put("Value",i.get("arguments"));
+				rowsList.add(rowsList3);
+				if(i.get("working_directory") == null)
+				{
+					rowsList4 = Map();
+					rowsList4.put("Parameter","Working directory");
+					rowsList4.put("Value","null");
+					rowsList.add(rowsList4);
+				}
+				else
+				{
+					rowsList4 = Map();
+					rowsList4.put("Parameter","Working directory");
+					rowsList4.put("Value",i.get("working_directory"));
+					rowsList.add(rowsList4);
+				}
+				data.put("rows",rowsList);
+				slidesList0.put("data",data);
+				slidesList.add(slidesList0);
+				response.put("slides",slidesList);
+				response.put("text","User \"" + i.get("user") + "\" shared \"" + i.get("name") + "\" console with you.");
+				return response;
+			}
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("theme","poll");
+			response.put("card",card);
+			response.put("text","There is no console shared with you.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"There is no console shared with you");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+	return Map();
+}
+return Map();

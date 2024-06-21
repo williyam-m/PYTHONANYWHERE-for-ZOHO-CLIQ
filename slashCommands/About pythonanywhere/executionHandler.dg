@@ -1,0 +1,61 @@
+
+id = selections.toMap().get("title");
+info id;
+if(id == "overview")
+{
+	response = Map();
+	response.put("text","overview");
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","Hey " + user.get("first_name") + ", I'm here to assist you! ");
+	response.put("card",card);
+	slidesList = list();
+	slidesList0 = Map();
+	slidesList0.put("type","text");
+	slidesList0.put("data","\nIntroduction: Elevate your Python development experience with the PythonAnywhere extension for Zoho Cliq. PythonAnywhere, a cloud-based platform renowned for hosting, running, and coding Python effortlessly in the cloud, is seamlessly integrated into your Zoho Cliq workspace. This extension provides a comprehensive suite of tools to manage, monitor, and colloborate your Python projects.\n\nPythonAnywhere Overview: PythonAnywhere is an online integrated development environment and web hosting service built around the Python programming language. Its intuitive interface and robust features make it a go-to platform for developers seeking easy deployment, efficient coding, and hassle-free hosting.\n\nBot : pythonanywhere Bot :\n \t (contains following menus and submenus to do corresponding operation)\n\n\t1)Connection:\n\t1.1) Connect : Connect to PythonAnywhere Account.\n\t1.2) Disconnect : Disonnect from an Account.\n\n\t2)Web App:\n\t2.1)Reload: Trigger a web app reload directly.\n\t2.2)Enable: Activate a specific web app, perfect for bringing it back online after maintenance.\n\t2.3)Disable: Deactivate a web app, ideal for performing maintenance or troubleshooting.\n\n\t3)Console:\n\t3.1)View: Gain insights into existing consoles for effective monitoring.\n\t3.2)Shared WithYou: Collaborate seamlessly with consoles shared by other users.\n\n\t4)Schedule Task:\n\t4.1)Create : Schedule Python tasks with precision.\n\t4.2)View : Monitor and manage your scheduled tasks effortlessly.\n\n\t5)Status:\n\t5.1)CPU : Keep a vigilant eye on CPU usage, ensuring optimal performance.\n\t5.2)Domain : Retrieve essential details about your PythonAnywhere domain.\n\t5.3)Students: To get list of students associated with your account.\n\t5.4)System Image: Access crucial information about your PythonAnywhere system image.\n\t5.5)Python Version:Identify the default Python version in use and view other available versions.\n\nWidget : pythonanywhere :\n\t1) console : The Python Console Widget revolutionizes your development process by spawning an \"anonymous\" console for each user. Whether they have a PythonAnywhere account or not, the console provides a versatile space for testing and executing Python code. For authenticated users, the console seamlessly integrates within their PythonAnywhere account for a personalized experience.\n\t2) Files : Access, edit, and download your project files.\n\t3) WSGI : Edit and view your WSGI file for smooth integration and optimal performance in your Python web applications. Manage WSGI configurations effortlessly.\n\t4) Log Files :Swiftly access log files directly for efficient troubleshooting\n\nDatabase : userkey :\n\t  To store username , apikey ,privatekey(for encryption and decryption) and dc of pythonanywhere for every user.\n\nScheduler : Cpu status :\n\tStay informed about your CPU's daily performance\n\nSlash Commands:\n\t1) /pythonanywhere : About pythonanywhere Extension.\n\nBot Message Handler:\n\t1) \"bot\" : To get all info about extension.\n\t1.1)\"How to create pythonanywhere account\"\n\t1.2)\"How to connect to pythonanywhere account\"\n\t1.3)\"overview\"\n");
+	slidesList.add(slidesList0);
+	response.put("slides",slidesList);
+	return response;
+}
+else if(id == "How to create pythonanywhere account")
+{
+	response = Map();
+	response.put("text","How to create pythonanywhere account");
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","Hey " + user.get("first_name") + ", I'm here to assist you! ");
+	response.put("card",card);
+	slidesList = list();
+	slidesList0 = Map();
+	slidesList0.put("type","text");
+	slidesList0.put("data","\n1) Go to : www.pythonanywhere.com \n\n 2) click \"start running python online in less than a minute\" \n\t (or) \n  Click \"Log in\" -> then click \"sigin up\" \n\n 3) choose pricing  (if you what free account click \"create a beginner account\") \n\n 4) Register your details \n  ");
+	slidesList.add(slidesList0);
+	response.put("slides",slidesList);
+	return response;
+}
+else if(id == "How to connect to pythonanywhere account")
+{
+	response = Map();
+	response.put("text","How to connect to pythonanywhere account");
+	bot = Map();
+	bot.put("name","pythonanywhere bot");
+	bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+	response.put("bot",bot);
+	card = Map();
+	card.put("title","Hey " + user.get("first_name") + ", I'm here to assist you! ");
+	response.put("card",card);
+	slidesList = list();
+	slidesList0 = Map();
+	slidesList0.put("type","text");
+	slidesList0.put("data","\nAfter create your account \n1) Go to : www.pythonanywhere.com (it will redirect to dashboard if you logged in \n\n 2) click \"Account\"  \n\n 3) Click \"API Token\" \n\n 4) Get your API key  \n\n 5) in pythonanywhere bot within cliq click menu \"Connection\" and click \"Connect\" \n\n 6) Register your details  and click \"submit\" \n");
+	slidesList.add(slidesList0);
+	response.put("slides",slidesList);
+	return response;
+}
+return response;

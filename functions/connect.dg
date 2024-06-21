@@ -1,0 +1,59 @@
+
+v = form.get("values");
+apikey = v.get("apikey");
+cliquser = user.get("id");
+username = v.get("username");
+dcmap = v.get("dc");
+dc = dcmap.get("value");
+host = "www.pythonanywhere.com";
+if(dc == "eu")
+{
+	host = "eu.pythonanywhere.com";
+}
+api_url = "https://" + host + "/api/v0/user/" + username + "/default_save_and_run_python_version/";
+headers = Map();
+headers.put("Authorization","Token " + apikey);
+headers.put("Content-Type","application/json");
+responseapi = getUrl(api_url,headers);
+info responseapi;
+r = responseapi.toList();
+for each  i in r
+{
+	if(i.get("detail") != "Invalid token.")
+	{
+		values_map = Map();
+		privatekey = randomNumber(100000,10000000000);
+		values_map.put("privatekey",privatekey);
+		apikey = zoho.encryption.aesEncode(privatekey,apikey);
+		values_map.put("apikey",apikey);
+		values_map.put("cliquser",cliquser);
+		values_map.put("username",username);
+		values_map.put("dc",dc);
+		responsedb = zoho.cliq.createRecord("userkey",values_map);
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","Connection status : " + responsedb.get("status"));
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"Connection status : " + responsedb.get("status"));
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","Invalid credentials");
+		return response;
+	}
+}
+return Map();

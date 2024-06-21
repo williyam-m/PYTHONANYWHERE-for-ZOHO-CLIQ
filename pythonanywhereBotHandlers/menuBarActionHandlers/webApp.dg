@@ -1,0 +1,315 @@
+
+response = Map();
+if(sub_action.containsIgnoreCase("Reload"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+			inputs = list();
+			options = List();
+			//r = ["demoappk.com","demoapp.pythonanywhere.com"];
+			for each  i in r
+			{
+				value = "";
+				d = i.get("domain_name");
+				col = d;
+				for each  c in col.toCollection("")
+				{
+					info c;
+					if(c == ".")
+					{
+						value = value + "_";
+					}
+					else
+					{
+						value = value + c;
+					}
+				}
+				option = Map();
+				option.put("value",value);
+				option.put("label",d);
+				options.add(option);
+			}
+			inputs.add({"name":"domain","label":"Domain","placeholder":"Choose  domain","multiple":false,"mandatory":true,"type":"dynamic_select","options":options});
+			form = {"type":"form","title":"Reload Webapp","name":"wordform","actions":{"submit":{"type":"invoke.function","name":"reload"}},"inputs":inputs};
+			return form;
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("title","You don't have any Webapp");
+			card.put("theme","prompt");
+			response.put("card",card);
+			buttonsList = list();
+			buttonsList0 = Map();
+			buttonsList0.put("label","Create webapp");
+			buttonsList0.put("type","-");
+			action = Map();
+			action.put("type","open.url");
+			data = Map();
+			data.put("web","https://" + host + "/user/" + username + "/webapps/#tab_id_new_webapp_tab");
+			action.put("data",data);
+			buttonsList0.put("action",action);
+			buttonsList.add(buttonsList0);
+			response.put("buttons",buttonsList);
+			response.put("text","Click below link to redirect to Create webapp page.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"You don't have any Webapp");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+}
+else if(sub_action.containsIgnoreCase("Enable"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+			inputs = list();
+			options = List();
+			//r = ["demoappk.com","demoapp.pythonanywhere.com"];
+			for each  i in r
+			{
+				value = "";
+				d = i.get("domain_name");
+				col = d;
+				for each  c in col.toCollection("")
+				{
+					info c;
+					if(c == ".")
+					{
+						value = value + "_";
+					}
+					else
+					{
+						value = value + c;
+					}
+				}
+				option = Map();
+				option.put("value",value);
+				option.put("label",d);
+				options.add(option);
+			}
+			inputs.add({"name":"domain","label":"Domain","placeholder":"Choose  domain","multiple":false,"mandatory":true,"type":"dynamic_select","options":options});
+			form = {"type":"form","title":"Enable Webapp","name":"wordform","actions":{"submit":{"type":"invoke.function","name":"enable"}},"inputs":inputs};
+			return form;
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("title","You don't have any Webapp");
+			card.put("theme","prompt");
+			response.put("card",card);
+			buttonsList = list();
+			buttonsList0 = Map();
+			buttonsList0.put("label","Create webapp");
+			buttonsList0.put("type","-");
+			action = Map();
+			action.put("type","open.url");
+			data = Map();
+			data.put("web","https://" + host + "/user/" + username + "/webapps/#tab_id_new_webapp_tab");
+			action.put("data",data);
+			buttonsList0.put("action",action);
+			buttonsList.add(buttonsList0);
+			response.put("buttons",buttonsList);
+			response.put("text","Click below link to redirect to Create webapp page.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"You don't have any Webapp");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+}
+else if(sub_action.containsIgnoreCase("Disable"))
+{
+	query_map = Map();
+	query_map.put("criteria","cliquser==" + user.get("id"));
+	db = zoho.cliq.getRecords("userkey",query_map);
+	if(db.get("status") == "SUCCESS" && db.get("list").size() != 0)
+	{
+		list = db.get("list");
+		for each  i in list
+		{
+			username = i.get("username");
+			privatekey = i.get("privatekey");
+			apikey = i.get("apikey");
+			apikey = zoho.encryption.aesDecode(privatekey,apikey);
+			dc = i.get("dc");
+		}
+		host = "www.pythonanywhere.com";
+		if(dc == "eu")
+		{
+			host = "eu.pythonanywhere.com";
+		}
+		api_url = "https://" + host + "/api/v0/user/" + username + "/webapps/";
+		headers = Map();
+		headers.put("Authorization","Token " + apikey);
+		headers.put("Content-Type","application/json");
+		responseapi = getUrl(api_url,headers);
+		info responseapi;
+		r = responseapi.toList();
+		if(r.size() != 0)
+		{
+			inputs = list();
+			options = List();
+			//r = ["demoappk.com","demoapp.pythonanywhere.com"];
+			for each  i in r
+			{
+				value = "";
+				d = i.get("domain_name");
+				col = d;
+				for each  c in col.toCollection("")
+				{
+					info c;
+					if(c == ".")
+					{
+						value = value + "_";
+					}
+					else
+					{
+						value = value + c;
+					}
+				}
+				option = Map();
+				option.put("value",value);
+				option.put("label",d);
+				options.add(option);
+			}
+			inputs.add({"name":"domain","label":"Domain","placeholder":"Choose  domain","multiple":false,"mandatory":true,"type":"dynamic_select","options":options});
+			form = {"type":"form","title":"Disable Webapp","name":"wordform","actions":{"submit":{"type":"invoke.function","name":"disable"}},"inputs":inputs};
+			return form;
+		}
+		else
+		{
+			response = Map();
+			bot = Map();
+			bot.put("name","pythonanywhere bot");
+			bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+			response.put("bot",bot);
+			card = Map();
+			card.put("title","You don't have any Webapp");
+			card.put("theme","prompt");
+			response.put("card",card);
+			buttonsList = list();
+			buttonsList0 = Map();
+			buttonsList0.put("label","Create webapp");
+			buttonsList0.put("type","-");
+			action = Map();
+			action.put("type","open.url");
+			data = Map();
+			data.put("web","https://" + host + "/user/" + username + "/webapps/#tab_id_new_webapp_tab");
+			action.put("data",data);
+			buttonsList0.put("action",action);
+			buttonsList.add(buttonsList0);
+			response.put("buttons",buttonsList);
+			response.put("text","Click below link to redirect to Create webapp page.");
+			return response;
+			//zoho.cliq.postToChat(chat.get("id"),"You don't have any Webapp");
+		}
+	}
+	else
+	{
+		response = Map();
+		bot = Map();
+		bot.put("name","pythonanywhere bot");
+		bot.put("image","https://www.bing.com/images/blob?bcid=RBiTH4qcI2EGL-9P5U5m6hXymsCX.....7E");
+		response.put("bot",bot);
+		card = Map();
+		card.put("title","You're not connected ");
+		card.put("icon","https://cdn2.iconfinder.com/data/icons/universal-31/320/connector_cord_disconnect_electric-256.png");
+		card.put("theme","poll");
+		response.put("card",card);
+		response.put("text","use \"Connection\" menu to connect");
+		return response;
+		//zoho.cliq.postToChat(chat.get("id"),"You're not connected ");
+	}
+}
+return Map();
